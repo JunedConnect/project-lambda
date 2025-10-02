@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        :root { 
+            --green-primary: #0b7a3b; 
+            --green-dark: #085c2c; 
+            --green-light: #11a053; 
+            --green-text: #0b7a3b; 
+            --green-border: #11a053; 
+        }
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+            color: var(--green-text); 
+            background: #ffffff; 
+        }
+        body { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 720px; 
+            padding: 24px; 
+        }
+        .card { 
+            background: #ffffff; 
+            border: 2px solid var(--green-border); 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(11,122,59,0.1); 
+            padding: 28px; 
+        }
+        h1 { 
+            margin: 0 0 8px 0; 
+            font-size: 28px; 
+            font-weight: 700; 
+            letter-spacing: 0.2px; 
+            color: var(--green-primary); 
+        }
+        p.sub { 
+            margin: 0 0 24px 0; 
+            color: var(--green-dark); 
+        }
+        .row { 
+            display: flex; 
+            gap: 12px; 
+        }
+        input[type=url] { 
+            flex: 1; 
+            padding: 14px 16px; 
+            border-radius: 12px; 
+            border: 2px solid var(--green-border); 
+            background: #ffffff; 
+            color: var(--green-text); 
+            font-size: 16px; 
+            outline: none; 
+            transition: border 0.2s, box-shadow 0.2s; 
+        }
+        input[type=url]::placeholder { 
+            color: rgba(11,122,59,0.6); 
+        }
+        input[type=url]:focus { 
+            border-color: var(--green-primary); 
+            box-shadow: 0 0 0 4px rgba(17,160,83,0.25); 
+        }
+        button { 
+            padding: 14px 18px; 
+            border-radius: 12px; 
+            border: none; 
+            background: var(--green-light); 
+            color: #ffffff; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: transform 0.05s ease, filter 0.2s ease; 
+        }
+        button:hover { 
+            filter: brightness(1.05); 
+        }
+        button:active { 
+            transform: translateY(1px); 
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .result { 
+            margin-top: 20px; 
+            padding: 14px 16px; 
+            background: rgba(17,160,83,0.1); 
+            border-radius: 12px; 
+            border: 1px solid var(--green-border); 
+            display: none; 
+            color: var(--green-text); 
+        }
+        .error { 
+            margin-top: 12px; 
+            color: #dc3545; 
+            display: none; 
+        }
+        a.short { 
+            color: var(--green-primary); 
+            font-weight: 700; 
+            text-decoration: underline; 
+        }
+        .footer { 
+            margin-top: 20px; 
+            opacity: 0.7; 
+            font-size: 13px; 
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>URL Shortener</h1>
+            <p class="sub">Paste a URL, get a short link you can click.</p>
+            <div class="row">
+                <input id="urlInput" type="url" placeholder="https://example.com/very/long/link" />
+                <button id="shortenBtn">Shorten</button>
+            </div>
+            <div id="error" class="error"></div>
+            <div id="result" class="result"></div>
+            <div class="footer">
+                <p>Simple URL Shortener</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://tk237yud4k.execute-api.eu-west-2.amazonaws.com/prod-stage';
+        
+        const input = document.getElementById('urlInput');
+        const btn = document.getElementById('shortenBtn');
+        const result = document.getElementById('result');
+        const error = document.getElementById('error');
+
+        async function shorten() {
+            if (btn.disabled) return;
+            
+            error.style.display = 'none';
+            result.style.display = 'none';
+            
+            const url = input.value.trim();
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<div class="loading"></div>';
+                
+                console.log('Calling API:', `${API_BASE_URL}/shorten`);
+                
+                const response = await fetch(`${API_BASE_URL}/shorten`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Failed to shorten URL' }));
+                    throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                const shortUrl = `${API_BASE_URL}/${data.short}`;
+                result.innerHTML = `Short URL: <a class="short" href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a>`;
+                result.style.display = 'block';
+                
+                // Copy to clipboard functionality
+                result.innerHTML += `<br><button onclick="copyToClipboard('${shortUrl}')" style="margin-top: 8px; padding: 8px 12px; font-size: 12px;">Copy Link</button>`;
+                
+            } catch (e) {
+                console.error('Error:', e);
+                showError(e.message || 'Something went wrong');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Shorten';
+            }
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show feedback
+                const copyBtn = event.target;
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = 'var(--green-primary)';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = 'var(--green-light)';
+                }, 2000);
+            }).catch(() => {
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        btn.addEventListener('click', shorten);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') shorten();
+        });
+    </script>
+</body>
+</html>

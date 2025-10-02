@@ -57,6 +57,12 @@ module "route53" {
     dns_ttl              = var.dns_ttl
 }
 
+module "s3" {
+  source = "./modules/s3"
+
+  name                        = var.name
+  s3_version_expiration_days  = var.s3_version_expiration_days
+}
 module "vpc" {
   source = "./modules/vpc"
 

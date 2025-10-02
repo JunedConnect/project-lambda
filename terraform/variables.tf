@@ -165,6 +165,15 @@ variable "dns_ttl" {
 }
 
 
+# S3
+
+variable "s3_version_expiration_days" {
+  description = "Number of days after which non-current versions of S3 objects are deleted"
+  type        = number
+  default     = 30
+}
+
+
 # VPC
 
 variable "vpc_cidr_block" {
