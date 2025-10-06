@@ -1,6 +1,6 @@
 output "website_url" {
   description = "URL of the S3 website"
-  value       = "http://${module.s3.s3_website_endpoint}"
+  value       = "https://${module.s3.s3_bucket_domain_name}"
 }
 
 output "api_gateway_url" {

@@ -23,9 +23,16 @@ terraform {
 }
 
 
+# main provider
 provider "aws" {
   region = "eu-west-2"
   default_tags {
     tags = var.aws_tags
   }
 }
+
+# certificate provider
+# provider "aws" {
+#   region = "us-east-1"
+#   alias = "us_east_1" # this is required for CloudFront to work
+# }

@@ -8,3 +8,9 @@ variable "s3_version_expiration_days" {
   type        = number
   default     = 30
 }
+
+variable "cloudfront_distribution_arn" {
+  description = "ARN of the CloudFront distribution for OAC access"
+  type        = string
+  default     = null
+}

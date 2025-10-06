@@ -18,72 +18,30 @@ variable "aws_tags" {
 }
 
 
-# ALB
+# CloudFront
 
-variable "alb_internal" {
-  description = "Whether the ALB is internal or not"
-  type        = bool
-  default     = false
-}
-
-variable "alb_load_balancer_type" {
-  description = "Type of the load balancer"
+variable "s3_origin_id" {
+  description = "Origin ID for S3 bucket in CloudFront distribution"
   type        = string
-  default     = "application"
+  default     = "myS3Origin"
 }
 
-variable "listener_port_http" {
-  description = "Port for the HTTP listener"
+variable "domain_aliases" {
+  description = "List of domain  aliases to append to the main domain name for CloudFront distribution"
+  type        = list(string)
+  default     = ["test"]
+}
+
+variable "price_class" {
+  description = "CloudFront price class"
   type        = string
-  default     = "80"
+  default     = "PriceClass_200"
 }
 
-variable "listener_protocol_http" {
-  description = "Protocol for the HTTP listener"
-  type        = string
-  default     = "HTTP"
-}
-
-variable "listener_port_https" {
-  description = "Port for the HTTPS listener"
-  type        = string
-  default     = "443"
-}
-
-variable "listener_protocol_https" {
-  description = "Protocol for the HTTPS listener"
-  type        = string
-  default     = "HTTPS"
-}
-
-variable "target_group_name" {
-  description = "Name of the target group"
-  type        = string
-  default     = "this"
-}
-
-variable "target_group_port" {
-  description = "Port for the target group"
-  type        = number
-  default     = 8080
-}
-
-variable "target_group_health_check_path" {
-  description = "Health check path for the target group"
-  type        = string
-  default     = "/"
-}
-
-variable "target_group_protocol" {
-  description = "Protocol for the target group"
-  type        = string
-  default     = "HTTP"
-}
-
-variable "target_group_target_type" {
-  description = "Target type for the target group"
-  type        = string
-  default     = "ip"
+variable "geo_restriction_locations" {
+  description = "List of country codes for CloudFront geo restrictions"
+  type        = list(string)
+  default     = ["US", "CA", "GB", "DE"]
 }
 
 
@@ -171,73 +129,4 @@ variable "s3_version_expiration_days" {
   description = "Number of days after which non-current versions of S3 objects are deleted"
   type        = number
   default     = 30
-}
-
-
-# VPC
-
-variable "vpc_cidr_block" {
-  description = "CIDR block for the VPC"
-  type        = string
-  default     = "10.2.0.0/16"
-}
-
-variable "publicsubnet1_cidr_block" {
-  description = "CIDR block for public subnet 1"
-  type        = string
-  default     = "10.2.1.0/24"
-}
-
-variable "publicsubnet2_cidr_block" {
-  description = "CIDR block for public subnet 2"
-  type        = string
-  default     = "10.2.2.0/24"
-}
-
-variable "privatesubnet1_cidr_block" {
-  description = "CIDR block for private subnet 1"
-  type        = string
-  default     = "10.2.3.0/24"
-}
-
-variable "privatesubnet2_cidr_block" {
-  description = "CIDR block for private subnet 2"
-  type        = string
-  default     = "10.2.4.0/24"
-}
-
-variable "enable_dns_support" {
-  description = "Enable DNS support in the VPC"
-  type        = bool
-  default     = true
-}
-
-variable "enable_dns_hostnames" {
-  description = "Enable DNS hostnames in the VPC"
-  type        = bool
-  default     = true
-}
-
-variable "subnet_map_public_ip_on_launch" {
-  description = "Whether to map public IP on launch for subnets"
-  type        = bool
-  default     = true
-}
-
-variable "availability_zone_1" {
-  description = "Availability zone 1"
-  type        = string
-  default     = "eu-west-2a"
-}
-
-variable "availability_zone_2" {
-  description = "Availability zone 2"
-  type        = string
-  default     = "eu-west-2b"
-}
-
-variable "route_cidr_block" {
-  description = "CIDR block for the route"
-  type        = string
-  default     = "0.0.0.0/0"
 }

@@ -1,33 +1,23 @@
-module "alb" {
-    source = "./modules/alb"
-    security_group_id = module.vpc.security_group_id
-    certificate_arn = module.route53.certificate_arn
-    public_subnet_ids = module.vpc.public_subnet_ids
-
-    name                         = var.name
-    alb_internal                 = var.alb_internal
-    alb_load_balancer_type       = var.alb_load_balancer_type
-    listener_port_http           = var.listener_port_http
-    listener_protocol_http       = var.listener_protocol_http
-    listener_port_https          = var.listener_port_https
-    listener_protocol_https      = var.listener_protocol_https
-
-    vpc_id = module.vpc.vpc_id
-
-    target_group_name              = var.target_group_name
-    target_group_port              = var.target_group_port
-    target_group_health_check_path = var.target_group_health_check_path
-    target_group_protocol          = var.target_group_protocol
-    target_group_target_type       = var.target_group_target_type
-}
-
 module "api_gateway" {
   source = "./modules/api-gateway"
 
   name = var.name
-
+  
   lambda_function_name = module.lambda.lambda_function_name
   lambda_invoke_arn    = module.lambda.lambda_invoke_arn
+}
+
+module "cloudfront" {
+  source = "./modules/cloudfront"
+
+  s3_bucket_domain_name      = module.s3.s3_bucket_domain_name
+  s3_origin_id               = var.s3_origin_id
+  domain_name                = var.domain_name
+  domain_aliases             = var.domain_aliases
+  price_class                = var.price_class
+  geo_restriction_locations  = var.geo_restriction_locations
+  certificate_arn            = module.route53.certificate_arn
+  certificate_validation_arn = module.route53.certificate_validation_arn
 }
 
 module "lambda" {
@@ -49,12 +39,15 @@ module "lambda" {
 
 module "route53" {
     source = "./modules/route53"
-    alb_dns_name = module.alb.alb_dns_name
-    alb_zone_id = module.alb.alb_zone_id
 
     domain_name          = var.domain_name
+    domain_aliases       = var.domain_aliases
     validation_method    = var.validation_method
     dns_ttl              = var.dns_ttl
+
+    cloudfront_domain_name     = module.cloudfront.cloudfront_domain_name
+    cloudfront_hosted_zone_id  = module.cloudfront.cloudfront_hosted_zone_id
+    cloudfront_aliases         = module.cloudfront.cloudfront_aliases
 }
 
 module "s3" {
@@ -62,20 +55,5 @@ module "s3" {
 
   name                        = var.name
   s3_version_expiration_days  = var.s3_version_expiration_days
-}
-module "vpc" {
-  source = "./modules/vpc"
-
-  name                           = var.name
-  vpc_cidr_block                 = var.vpc_cidr_block
-  publicsubnet1_cidr_block       = var.publicsubnet1_cidr_block
-  publicsubnet2_cidr_block       = var.publicsubnet2_cidr_block
-  privatesubnet1_cidr_block      = var.privatesubnet1_cidr_block
-  privatesubnet2_cidr_block      = var.privatesubnet2_cidr_block
-  enable_dns_support             = var.enable_dns_support
-  enable_dns_hostnames           = var.enable_dns_hostnames
-  subnet_map_public_ip_on_launch = var.subnet_map_public_ip_on_launch
-  availability_zone_1            = var.availability_zone_1
-  availability_zone_2            = var.availability_zone_2
-  route_cidr_block               = var.route_cidr_block
+  cloudfront_distribution_arn = module.cloudfront.cloudfront_distribution_arn
 }
