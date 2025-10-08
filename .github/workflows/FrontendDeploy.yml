@@ -45,6 +45,8 @@ jobs:
               run: |
                 BUCKET_NAME=$(terraform output -raw s3_bucket_name)
                 API_URL=$(terraform output -raw api_gateway_url)
+                echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+                echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
             - name: Upload to S3
               working-directory: "./frontend"
@@ -87,6 +89,8 @@ jobs:
               run: |
                 BUCKET_NAME=$(terraform output -raw s3_bucket_name)
                 API_URL=$(terraform output -raw api_gateway_url)
+                echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+                echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
             - name: Upload to S3
               working-directory: "./frontend"
