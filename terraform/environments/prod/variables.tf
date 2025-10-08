@@ -10,8 +10,8 @@ variable "aws_tags" {
   description = "Tags for Resources"
   type        = map(string)
   default = {
-    Environment = "dev",
-    Project     = "url-shortener",
+    Environment = "prod",
+    Project     = "lambda",
     Owner       = "juned",
     Terraform   = "true"
   }

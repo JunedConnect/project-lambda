@@ -1,5 +1,5 @@
 module "api_gateway" {
-  source = "./modules/api-gateway"
+  source = "../../modules/api-gateway"
 
   name = var.name
   
@@ -8,7 +8,7 @@ module "api_gateway" {
 }
 
 module "cloudfront" {
-  source = "./modules/cloudfront"
+  source = "../../modules/cloudfront"
 
   s3_bucket_domain_name      = module.s3.s3_bucket_domain_name
   s3_origin_id               = var.s3_origin_id
@@ -21,7 +21,7 @@ module "cloudfront" {
 }
 
 module "lambda" {
-  source = "./modules/lambda"
+  source = "../../modules/lambda"
 
   name = var.name
 
@@ -38,7 +38,7 @@ module "lambda" {
 }
 
 module "route53" {
-    source = "./modules/route53"
+    source = "../../modules/route53"
 
     domain_name          = var.domain_name
     domain_aliases       = var.domain_aliases
@@ -51,7 +51,7 @@ module "route53" {
 }
 
 module "s3" {
-  source = "./modules/s3"
+  source = "../../modules/s3"
 
   name                        = var.name
   s3_version_expiration_days  = var.s3_version_expiration_days
