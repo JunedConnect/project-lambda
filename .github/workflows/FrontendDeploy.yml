@@ -37,9 +37,11 @@ jobs:
                 BUCKET_NAME=$(terraform output -raw s3_bucket_name)
                 API_URL=$(terraform output -raw api_gateway_url)
                 STAGE_NAME=$(terraform output -raw api_gateway_stage_name)
+                CLOUDFRONT_ID=$(terraform output -raw cloudfront_distribution_id)
                 echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
                 echo "api_url=$API_URL" >> $GITHUB_OUTPUT
                 echo "stage_name=$STAGE_NAME" >> $GITHUB_OUTPUT
+                echo "cloudfront_id=$CLOUDFRONT_ID" >> $GITHUB_OUTPUT
 
             - name: Upload to S3
               working-directory: "./frontend"
@@ -49,3 +51,9 @@ jobs:
                 sed -i "s|const API_STAGE_NAME = '';|const API_STAGE_NAME = '${{ steps.terraform.outputs.stage_name }}';|g" index.html
                 sed -i "s|const API_BASE_URL = '';|const API_BASE_URL = '${{ steps.terraform.outputs.api_url }}';|g" error.html
                 aws s3 sync . "s3://${{ steps.terraform.outputs.bucket_name }}" --delete
+
+            - name: Invalidate CloudFront Cache
+              run: |
+                aws cloudfront create-invalidation \
+                  --distribution-id ${{ steps.terraform.outputs.cloudfront_id }} \
+                  --paths "/*"

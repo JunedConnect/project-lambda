@@ -13,3 +13,8 @@ output "api_gateway_stage_name" {
   description = "Name of the API Gateway stage"
   value       = module.api_gateway.api_gateway_stage_name
 }
+
+output "cloudfront_distribution_id" {
+  description = "ID of the CloudFront distribution"
+  value       = module.cloudfront.cloudfront_distribution_id
+}
