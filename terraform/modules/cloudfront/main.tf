@@ -1,28 +1,31 @@
-resource "aws_cloudfront_origin_access_control" "default" {
-  name                              = "default-oac"
+locals {
+  api_gateway_domain = split("/", replace(var.api_gateway_url, "https://", ""))[0] # this removes "https://"" from the API Gateway URL, and it also removes the stage name. Otherwise it cant be used in the distribution resource below
+}
+
+resource "aws_cloudfront_origin_access_control" "this" {
+  name                              = "${var.name}-oac"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_distribution" "s3_distribution" {
-  origin {
+resource "aws_cloudfront_distribution" "this" {
+  origin { # origin for the s3 bucket
     domain_name              = var.s3_bucket_domain_name
-    origin_access_control_id = aws_cloudfront_origin_access_control.default.id
-    origin_id                = var.s3_origin_id
+    origin_access_control_id = aws_cloudfront_origin_access_control.this.id
+    origin_id                = "${var.name}-s3"
   }
 
   enabled             = true
-  is_ipv6_enabled     = true
+  is_ipv6_enabled     = false
   default_root_object = "index.html"
 
-  aliases = [for alias in var.domain_aliases : "${alias}.${var.domain_name}"]
+  aliases = [var.domain_name]
 
-  default_cache_behavior {
+  default_cache_behavior { # default route to the s3 bucket
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = var.s3_origin_id
-
+    target_origin_id = "${var.name}-s3"
     forwarded_values {
       query_string = false
 
@@ -31,41 +34,34 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
   }
 
-  # Cache behavior with precedence 0
-  ordered_cache_behavior {
-    path_pattern     = "/content/immutable/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = var.s3_origin_id
-
-    forwarded_values {
-      query_string = false
-      headers      = ["Origin"]
-
-      cookies {
-        forward = "none"
-      }
+  origin { # origin for the api gateway
+    domain_name = local.api_gateway_domain
+    origin_id   = "${var.name}-api-gateway"
+    
+    custom_origin_config { # this is needed otherwise it will fail to be created since CloudFront would assume that the origin is an S3 bucket
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
-
-    min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
   }
 
-  # Cache behavior with precedence 1
-  ordered_cache_behavior {
-    path_pattern     = "/content/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+  ordered_cache_behavior { # routes api gateway requests to the api gateway origin
+    path_pattern     = "/${var.api_gateway_stage_name}/*"
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = var.s3_origin_id
+    target_origin_id = "${var.name}-api-gateway"
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 0
+    max_ttl                = 0
 
     forwarded_values {
       query_string = false
@@ -74,12 +70,13 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
         forward = "none"
       }
     }
+  }
 
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
+  custom_error_response { # this is needed in order to route the health pathway, and any other pathway that is not found, to the error.html page
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/error.html"
+    error_caching_min_ttl = 10
   }
 
   price_class = var.price_class
@@ -87,7 +84,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
-      locations        = var.geo_restriction_locations
+      locations        = var.geo_whitelist
     }
   }
 

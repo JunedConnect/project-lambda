@@ -7,13 +7,13 @@ aws_tags = {
 }
 
 # CloudFront
-s3_origin_id                  = "myS3Origin"
-domain_aliases                = ["test"]
 price_class                   = "PriceClass_200"
-geo_restriction_locations     = ["US", "CA", "GB", "DE"]
+geo_whitelist     = ["US", "CA", "GB", "DE"]
 
 # Lambda
 function_name = "my-function"
+
+# API Gateway
 
 dynamodb_table_name      = "url-prod"
 dynamodb_billing_mode    = "PAY_PER_REQUEST"

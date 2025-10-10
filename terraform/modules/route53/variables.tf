@@ -3,10 +3,6 @@ variable "domain_name" {
   type        = string
 }
 
-variable "domain_aliases" {
-  description = "List of subdomain aliases to append to the main domain"
-  type        = list(string)
-}
 
 variable "validation_method" {
   description = "The validation method for the ACM certificate"

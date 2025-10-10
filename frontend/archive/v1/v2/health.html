@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    <title>Health Check</title>
     <style>
         :root { 
             --green-primary: #0b7a3b; 
@@ -59,25 +59,6 @@
             font-size: 48px; 
             margin-bottom: 16px; 
         }
-        .back-link {
-            margin-top: 20px;
-        }
-        .back-link a {
-            color: var(--green-primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .back-link a:hover {
-            text-decoration: underline;
-        }
-        .error-icon {
-            font-size: 48px;
-            margin: 20px 0;
-        }
-        .error-message {
-            color: #721c24;
-            margin: 20px 0;
-        }
         .loading {
             display: inline-block;
             width: 20px;
@@ -94,11 +75,21 @@
             color: #dc3545;
             margin-top: 16px;
         }
+        .back-link {
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: var(--green-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <!-- Health Check Page (shown when URL is /health) -->
-    <div id="health-page" class="container" style="display: none;">
+    <div class="container">
         <div class="card">
             <div class="icon">🔍</div>
             <h1>Health Check</h1>
@@ -106,21 +97,9 @@
                 <div class="loading"></div> Checking service...
             </div>
             <div id="timestamp" class="timestamp"></div>
-            <div id="health-error" class="error" style="display: none;"></div>
+            <div id="error" class="error" style="display: none;"></div>
             <div class="back-link">
-                <a href="/">← Back to URL Shortener</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Error Page (shown for all other URLs) -->
-    <div id="error-page" class="container">
-        <div class="card">
-            <div class="error-icon">⚠️</div>
-            <h1>Page Not Found</h1>
-            <p class="error-message">The page you're looking for doesn't exist.</p>
-            <div class="back-link">
-                <a href="/">← Back to URL Shortener</a>
+                <a href="index.html">← Back to URL Shortener</a>
             </div>
         </div>
     </div>
@@ -128,27 +107,10 @@
     <script>
         const API_BASE_URL = '';
         
-        // Check URL and show appropriate page
-        function checkURL() {
-            const path = window.location.pathname;
-            const healthPage = document.getElementById('health-page');
-            const errorPage = document.getElementById('error-page');
-            
-            if (path === '/health') {
-                healthPage.style.display = 'block';
-                errorPage.style.display = 'none';
-                checkHealth();
-            } else {
-                healthPage.style.display = 'none';
-                errorPage.style.display = 'block';
-            }
-        }
-        
-        // Health Check functionality
         async function checkHealth() {
             const statusDiv = document.getElementById('status');
             const timestampDiv = document.getElementById('timestamp');
-            const errorDiv = document.getElementById('health-error');
+            const errorDiv = document.getElementById('error');
             
             try {
                 console.log('Calling health endpoint:', `${API_BASE_URL}/healthz`);
@@ -180,15 +142,11 @@
             }
         }
         
-        // Check URL on page load
-        checkURL();
+        // Check health on page load
+        checkHealth();
         
-        // Auto-refresh health check every 30 seconds when on health page
-        setInterval(() => {
-            if (document.getElementById('health-page').style.display !== 'none') {
-                checkHealth();
-            }
-        }, 30000);
+        // Auto-refresh every 30 seconds
+        setInterval(checkHealth, 30000);
     </script>
 </body>
 </html>

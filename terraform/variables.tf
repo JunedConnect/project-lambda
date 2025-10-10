@@ -20,26 +20,14 @@ variable "aws_tags" {
 
 # CloudFront
 
-variable "s3_origin_id" {
-  description = "Origin ID for S3 bucket in CloudFront distribution"
-  type        = string
-  default     = "myS3Origin"
-}
-
-variable "domain_aliases" {
-  description = "List of domain  aliases to append to the main domain name for CloudFront distribution"
-  type        = list(string)
-  default     = ["test"]
-}
-
 variable "price_class" {
   description = "CloudFront price class"
   type        = string
   default     = "PriceClass_200"
 }
 
-variable "geo_restriction_locations" {
-  description = "List of country codes for CloudFront geo restrictions"
+variable "geo_whitelist" {
+  description = "List of whitelisted country codes for CloudFront geo restrictions"
   type        = list(string)
   default     = ["US", "CA", "GB", "DE"]
 }
@@ -52,6 +40,7 @@ variable "function_name" {
   type        = string
   default     = "my-function"
 }
+
 
 variable "dynamodb_table_name" {
   description = "DynamoDB table name"
