@@ -43,17 +43,19 @@ jobs:
             - name: Get Terraform Outputs
               id: terraform
               run: |
-                DOMAIN_NAME=$(terraform output -raw cloudfront_domain_name)
+                DOMAIN_NAME=$(terraform output -raw website_domain)
                 echo "domain_name=$DOMAIN_NAME" >> $GITHUB_OUTPUT
 
             - name: Deployment Summary
               run: |
                 echo "### Infrastructure Deployment Complete" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $
                 echo "" >> $GITHUB_STEP_SUMMARY
                 echo "**CloudFront Domain:** \`${{ steps.terraform.outputs.domain_name }}\`" >> $GITHUB_STEP_SUMMARY
                 echo "" >> $GITHUB_STEP_SUMMARY
-                echo "### Next Steps:" >> $GITHUB_STEP_SUMMARY
+                echo "## Now you need to:" >> $GITHUB_STEP_SUMMARY
                 echo "1. **Deploy Frontend Code:** Run the \`Frontend Code Upload to S3\` workflow to upload your frontend files" >> $GITHUB_STEP_SUMMARY
                 echo "2. **Access Your Site:** Visit your domain once frontend is deployed" >> $GITHUB_STEP_SUMMARY
                 echo "" >> $GITHUB_STEP_SUMMARY
-                echo "> **Tip:** The frontend deployment pipeline will automatically invalidate CloudFront cache for immediate updates" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "The frontend deployment pipeline will automatically invalidate CloudFront cache for immediate updates" >> $GITHUB_STEP_SUMMARY

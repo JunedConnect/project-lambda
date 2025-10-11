@@ -23,3 +23,8 @@ output "cloudfront_domain_name" {
   description = "Domain name of the CloudFront distribution"
   value       = module.cloudfront.cloudfront_domain_name
 }
+
+output "website_domain" {
+  description = "Custom domain name for the website"
+  value       = var.domain_name
+}
