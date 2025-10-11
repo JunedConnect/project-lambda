@@ -1,4 +1,4 @@
-name: Frontend Code Upload to S3
+name: Frontend Code Upload
 
 on:
   workflow_dispatch:
