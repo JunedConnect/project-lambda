@@ -191,23 +191,7 @@
                 console.log('Response data:', data);
                 
                 const shortUrl = `${window.location.origin}/${API_STAGE_NAME}/${data.short}`;
-                result.innerHTML = `
-                    <div style="margin-bottom: 10px;">
-                        Short URL: <a class="short" href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a>
-                    </div>
-                    <button onclick="copyToClipboard('${shortUrl}')" style="
-                        background: var(--green-light);
-                        color: white;
-                        border: none;
-                        padding: 8px 16px;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        transition: background 0.2s;
-                    " onmouseover="this.style.background='var(--green-primary)'" onmouseout="this.style.background='var(--green-light)'">
-                        Copy Link
-                    </button>
-                `;
+                result.innerHTML = `Short URL: <a class="short" href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a>`;
                 result.style.display = 'block';
                 
             } catch (e) {
@@ -224,55 +208,6 @@
             error.style.display = 'block';
         }
 
-        function copyToClipboard(text) {
-            // Try modern clipboard API first
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess();
-                }).catch(() => {
-                    // Fallback to old method
-                    fallbackCopyTextToClipboard(text);
-                });
-            } else {
-                // Fallback for older browsers or non-secure contexts
-                fallbackCopyTextToClipboard(text);
-            }
-        }
-
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showCopySuccess();
-                } else {
-                    alert('Failed to copy to clipboard');
-                }
-            } catch (err) {
-                alert('Failed to copy to clipboard');
-            }
-            
-            document.body.removeChild(textArea);
-        }
-
-        function showCopySuccess() {
-            const copyBtn = event.target;
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            copyBtn.style.background = 'var(--green-primary)';
-            setTimeout(() => {
-                copyBtn.textContent = originalText;
-                copyBtn.style.background = 'var(--green-light)';
-            }, 2000);
-        }
 
         btn.addEventListener('click', shorten);
         input.addEventListener('keydown', (e) => {

@@ -1,5 +1,5 @@
 locals {
-  api_gateway_domain = split("/", replace(var.api_gateway_url, "https://", ""))[0] # this removes "https://"" from the API Gateway URL, and it also removes the stage name. Otherwise it cant be used in the distribution resource below
+  api_gateway_domain = split("/", replace(var.api_gateway_url, "https://", ""))[0] # this removes "https://"" from the API Gateway URL, and it also removes the stage name. Otherwise it can't be used in the distribution resource below
 }
 
 resource "aws_cloudfront_origin_access_control" "this" {
