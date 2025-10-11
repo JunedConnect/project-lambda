@@ -1,5 +1,5 @@
 # General
-name   = "prod"
+name   = "live"
 aws_tags = {
   Environment = "prod"
   Owner       = "juned"
