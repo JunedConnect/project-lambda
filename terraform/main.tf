@@ -54,6 +54,5 @@ module "s3" {
   source = "./modules/s3"
 
   name                        = var.name
-  s3_version_expiration_days  = var.s3_version_expiration_days
   cloudfront_distribution_arn = module.cloudfront.cloudfront_distribution_arn
 }

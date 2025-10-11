@@ -40,16 +40,7 @@ jobs:
             - name: Empty S3 bucket
               run: |
                 BUCKET_NAME=$(terraform output -raw s3_bucket_name)
-                aws s3api delete-objects \
-                  --bucket $BUCKET_NAME \
-                  --delete "$(aws s3api list-object-versions \
-                    --bucket $BUCKET_NAME \
-                    --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"
-                aws s3api delete-objects \
-                  --bucket $BUCKET_NAME \
-                  --delete "$(aws s3api list-object-versions \
-                    --bucket $BUCKET_NAME \
-                    --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}')"
+                aws s3 rm s3://$BUCKET_NAME --recursive
 
             - name: Terraform Destroy
               run: terraform destroy -auto-approve

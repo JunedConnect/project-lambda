@@ -26,9 +26,6 @@ dynamodb_ttl_enabled = true
 
 
 # Route53
-domain_name                     = "prod.juned.co.uk"
+domain_name                     = "juned.co.uk"
 validation_method               = "DNS"
 dns_ttl                         = 60
-
-# S3
-s3_version_expiration_days     = 30

@@ -110,12 +110,3 @@ variable "dns_ttl" {
   type        = number
   default     = 60
 }
-
-
-# S3
-
-variable "s3_version_expiration_days" {
-  description = "Number of days after which non-current versions of S3 objects are deleted"
-  type        = number
-  default     = 30
-}
