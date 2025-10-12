@@ -1,10 +1,10 @@
-# Serverless URL Shortener
+# Project Lambda
 
-This project demonstrates how to build a **serverless URL shortener** using AWS Lambda, API Gateway, and CloudFront. The architecture provides **high availability, automatic scaling, and cost-effective** URL shortening services with a modern web interface and robust API endpoints.
+This project demonstrates how to build a **serverless URL shortener** using AWS Lambda, API Gateway, and CloudFront. The architecture provides **high availability, automatic scaling, and cost-effective** URL shortening services with a modern web interface and API endpoints.
 
 The project builds a complete URL shortener service using **serverless AWS services** with **automated CI/CD pipelines** that deploy infrastructure and frontend code. The setup includes **CloudFront CDN** for global content delivery, **S3 static hosting** for the frontend, and **Lambda functions** for the backend API.
 
-The architecture uses **serverless components** throughout, with **DynamoDB** for data storage, **API Gateway** for REST API management, and **CloudFront** for global content delivery. **Everything is automated**, from infrastructure deployment to frontend updates, making it easy to maintain and scale the application.
+The architecture uses **serverless components** throughout, with **DynamoDB** for data storage, **API Gateway** for REST API management, and **CloudFront** for global content delivery. **Everything is automated**, from infrastructure deployment to frontend updates.
 
 ## Key Features
 
