@@ -6,14 +6,16 @@ The architecture uses **serverless components** throughout, with **DynamoDB** fo
 
 ## Key Features
 
-- **Lambda** - Serverless compute for URL shortening logic
+- **GitHub Actions** - Automated CI/CD for infrastructure and frontend deployment
+- **Lambda** - Serverless computing functions for URL shortening logic
 - **API Gateway** - RESTful API management and HTTP endpoint handling
 - **CloudFront** - Global CDN for fast content delivery and caching
 - **S3** - Static website hosting with Origin Access Control (OAC)
 - **DynamoDB** - NoSQL database for URL mapping storage with TTL
 - **Route53** - DNS management and SSL certificate automation
 - **ACM** - SSL/TLS certificate management for secure HTTPS
-- **GitHub Actions** - Automated CI/CD for infrastructure and frontend deployment
+
+<br>
 
 ## Why I Chose Serverless
 
@@ -32,7 +34,7 @@ This architecture design means I'll be paying pennies in comparison to deploying
 │   └── error.html          # Error handling and health check
 ├── lambda/
 │   ├── raw/                # Lambda source code
-│   └── zip/                # Lambda deployment package
+│   └── zip/                # Lambda deployment package (compiled from the raw directory)
 ├── terraform/
 │   ├── modules/            # Infrastructure modules
 │   └── main.tf             # Root Terraform configuration
@@ -88,17 +90,45 @@ Access the application through your domain to use the web interface for URL shor
 
 <br>
 
+### API Endpoints
+
+Once infra is deployed, you can test the API endpoints directly using the API Gateway invoke URL from the AWS Console:
+
+**Shorten URL:**
+```bash
+curl -X POST <API_GATEWAY_INVOKE_URL>/shorten \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com/very-long-url"}'
+```
+
+**Health Check:**
+```bash
+curl <API_GATEWAY_INVOKE_URL>/healthz
+```
+
+**Get Original URL:**
+```bash
+curl <API_GATEWAY_INVOKE_URL>/{short-id}
+```
+> Replace `{short-id}` with the actual short ID returned from the `Shorten URL` endpoint.
+
+<br>
+
+> **Note:** Get your API Gateway invoke URL from the AWS Console → API Gateway → Stages section.
+
+<br>
+
 ## Future Improvements
 
-- **Health check on shortened URLs** - Verify if destination URLs are online before shortening
-- **Most popular shortened URLs** - Analytics dashboard showing most accessed short links
-- **Separation Concerns** - Dedicated Lambda for each endpoint (shorten, resolve, health)
-- **Custom short codes** - Allow users to create custom short URLs (e.g., `yoursite.com/custom`)
-- **Bulk URL shortening** - Upload CSV file to shorten multiple URLs at once
-- **QR code generation** - Automatically generate QR codes for shortened URLs
 - **API rate limiting** - Implement rate limiting to prevent abuse
 - **URL preview** - Show preview of destination page before redirecting
+- **Bulk URL shortening** - Upload CSV file to shorten multiple URLs at once
+- **QR code generation** - Automatically generate QR codes for shortened URLs
 - **Admin dashboard** - Management interface to view and manage all shortened URLs
+- **Most popular shortened URLs** - Analytics dashboard showing most accessed short links
+- **Separation of Concerns** - Dedicated Lambda for each endpoint (shorten, resolve, health)
+- **Health check on shortened URLs** - Verify if destination URLs are online before shortening
+- **Custom short codes** - Allow users to create custom short URLs (e.g. `yoursite.com/custom`)
 
 <br>
 
