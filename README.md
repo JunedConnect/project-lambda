@@ -63,9 +63,9 @@ The architecture uses **serverless components** throughout, with **DynamoDB** fo
 The project includes automated GitHub Actions workflows:
 
 - **Terraform Plan** - Reviews infrastructure changes before deployment
-- **Terraform Apply** - Deploys AWS infrastructure (Lambda, API Gateway, CloudFront, S3, Route53)
+- **Terraform Apply** - Deploys AWS infrastructure
+- **Terraform Destroy** - Cleans up all AWS resources
 - **Frontend Deploy** - Uploads frontend files to S3 and invalidates CloudFront cache
-- **Terraform Destroy** - Cleans up all AWS resources when done
 
 <br>
 
@@ -75,17 +75,11 @@ The project includes automated GitHub Actions workflows:
 
 Access the application through your domain to use the web interface for URL shortening.
 
-**Features:**
-- Clean, modern interface for URL shortening
-- Real-time URL generation and copying
-- Health check page accessible at `/health`
-- Error handling for invalid URLs
-
 ### App Functionality
 
 - **URL Shortening**: Enter any long URL and get a shortened version
 - **URL Redirection**: Click on shortened URLs to redirect to original URLs
-- **Health Monitoring**: Check service status at the health page
+- **Health Monitoring**: Check service status at the health page (`/health`)
 - **Error Handling**: Graceful error messages for invalid requests
 
 <br>
