@@ -1,7 +1,5 @@
 # Project Lambda
 
-This project demonstrates how to build a **serverless URL shortener** using AWS Lambda, API Gateway, and CloudFront. The architecture provides **high availability, automatic scaling, and cost-effective** URL shortening services with a modern web interface and API endpoints.
-
 The project builds a complete URL shortener service using **serverless AWS services** with **automated CI/CD pipelines** that deploy infrastructure and frontend code. The setup includes **CloudFront CDN** for global content delivery, **S3 static hosting** for the frontend, and **Lambda functions** for the backend API.
 
 The architecture uses **serverless components** throughout, with **DynamoDB** for data storage, **API Gateway** for REST API management, and **CloudFront** for global content delivery. **Everything is automated**, from infrastructure deployment to frontend updates.
@@ -16,6 +14,12 @@ The architecture uses **serverless components** throughout, with **DynamoDB** fo
 - **Route53** - DNS management and SSL certificate automation
 - **ACM** - SSL/TLS certificate management for secure HTTPS
 - **GitHub Actions** - Automated CI/CD for infrastructure and frontend deployment
+
+## Why I Chose Serverless
+
+Serverless means your code runs in response to events, not on constantly running servers. Each URL shortening request triggers a Lambda function that executes, processes the request, and shuts down completely. There's no server to keep warm, no containers to manage, and no idle costs. The entire backend is just functions that wake up when needed and disappear when done. This makes it ideal for applications where requests come and go unpredictably.
+
+This architecture design means I'll be paying pennies in comparison to deploying the same application on a service like ECS. For reference, you can see the difference by comparing this serverless approach with my [ECS-based URL shortener project](https://github.com/JunedConnect/project-blue-green/) that uses containers and always-running infrastructure.
 
 <br>
 
@@ -88,12 +92,11 @@ Access the application through your domain to use the web interface for URL shor
 
 - **Health check on shortened URLs** - Verify if destination URLs are online before shortening
 - **Most popular shortened URLs** - Analytics dashboard showing most accessed short links
-- **Separation of Lambda functions** - Dedicated Lambda for each endpoint (shorten, resolve, health)
+- **Separation Concerns** - Dedicated Lambda for each endpoint (shorten, resolve, health)
 - **Custom short codes** - Allow users to create custom short URLs (e.g., `yoursite.com/custom`)
 - **Bulk URL shortening** - Upload CSV file to shorten multiple URLs at once
 - **QR code generation** - Automatically generate QR codes for shortened URLs
 - **API rate limiting** - Implement rate limiting to prevent abuse
-- **API Gateway throttling** - Built-in request throttling
 - **URL preview** - Show preview of destination page before redirecting
 - **Admin dashboard** - Management interface to view and manage all shortened URLs
 
