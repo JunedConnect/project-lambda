@@ -23,12 +23,6 @@ This architecture design means I'll be paying pennies in comparison to deploying
 
 <br>
 
-## Architecture
-
-![Workflow Diagram](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/workflow-diagram.png)
-
-<br>
-
 ## Directory Structure
 
 ```
@@ -44,6 +38,12 @@ This architecture design means I'll be paying pennies in comparison to deploying
 │   └── main.tf             # Root Terraform configuration
 └── .github/workflows/      # CI/CD pipelines
 ```
+
+<br>
+
+## Architecture
+
+![Workflow Diagram](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/workflow-diagram.png)
 
 <br>
 
