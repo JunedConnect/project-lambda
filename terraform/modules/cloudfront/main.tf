@@ -59,7 +59,7 @@ resource "aws_cloudfront_distribution" "this" {
     target_origin_id = "${var.name}-api-gateway"
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
+    min_ttl                = 0 # will not cache the api gateway requests because they are dynamic in nature
     default_ttl            = 0
     max_ttl                = 0
 

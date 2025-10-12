@@ -22,7 +22,7 @@ dynamodb_hash_key_name   = "id"
 dynamodb_attribute_name  = "id"
 dynamodb_attribute_type  = "S"
 dynamodb_ttl_attribute_name = "ttl"
-dynamodb_ttl_enabled = true
+dynamodb_ttl_enabled = true # this currently has no effect because the TTL is not being set in the Lambda function
 
 
 # Route53
