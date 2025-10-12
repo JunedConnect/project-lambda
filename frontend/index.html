@@ -146,6 +146,7 @@
 
     <script>
         const API_BASE_URL = '';
+        const API_STAGE_NAME = '';
         
         const input = document.getElementById('urlInput');
         const btn = document.getElementById('shortenBtn');
@@ -189,12 +190,9 @@
                 const data = await response.json();
                 console.log('Response data:', data);
                 
-                const shortUrl = `${API_BASE_URL}/${data.short}`;
+                const shortUrl = `${window.location.origin}/${API_STAGE_NAME}/${data.short}`;
                 result.innerHTML = `Short URL: <a class="short" href="${shortUrl}" target="_blank" rel="noopener">${shortUrl}</a>`;
                 result.style.display = 'block';
-                
-                // Copy to clipboard functionality
-                result.innerHTML += `<br><button onclick="copyToClipboard('${shortUrl}')" style="margin-top: 8px; padding: 8px 12px; font-size: 12px;">Copy Link</button>`;
                 
             } catch (e) {
                 console.error('Error:', e);
@@ -210,21 +208,6 @@
             error.style.display = 'block';
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                // Show feedback
-                const copyBtn = event.target;
-                const originalText = copyBtn.textContent;
-                copyBtn.textContent = 'Copied!';
-                copyBtn.style.background = 'var(--green-primary)';
-                setTimeout(() => {
-                    copyBtn.textContent = originalText;
-                    copyBtn.style.background = 'var(--green-light)';
-                }, 2000);
-            }).catch(() => {
-                alert('Failed to copy to clipboard');
-            });
-        }
 
         btn.addEventListener('click', shorten);
         input.addEventListener('keydown', (e) => {

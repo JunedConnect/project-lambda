@@ -2,14 +2,6 @@ name: Terraform Destroy
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Choose which environment to destroy'
-        required: true
-        type: choice
-        options:
-          - dev
-          - prod
 
 # on:
 #     push:
@@ -18,49 +10,11 @@ on:
 
 
 jobs:
-    terraformdestroy-dev:
+    terraformdestroy:
         runs-on: ubuntu-24.04
-        if: ${{ inputs.environment == 'dev' }}
         defaults:
             run:
-                working-directory: "./terraform/environments/dev"
-        permissions:
-            id-token: write   # This is required for requesting the JWT
-    
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
-            - name: Login to AWS
-              uses: aws-actions/configure-aws-credentials@v4
-              with:
-                role-to-assume: ${{ vars.AWS_GITHUB_ROLE_ARN }}
-                role-session-name: github-actions-session
-                aws-region: eu-west-2
-
-            - name: Set up Terraform
-              uses: hashicorp/setup-terraform@v3
-              with:
-                terraform_version: 1.11.1
-
-            - name: Terraform Init
-              run: terraform init
-
-            - name: Empty S3 bucket
-              run: |
-                BUCKET_NAME=$(terraform output -raw s3_bucket_name)
-                aws s3 rm s3://$BUCKET_NAME --recursive
-
-            - name: Terraform Destroy
-              run: terraform destroy -auto-approve
-
-
-    terraformdestroy-prod:
-        runs-on: ubuntu-24.04
-        if: ${{ inputs.environment == 'prod' }}
-        defaults:
-            run:
-                working-directory: "./terraform/environments/prod"
+                working-directory: "./terraform"
         permissions:
             id-token: write   # This is required for requesting the JWT
     

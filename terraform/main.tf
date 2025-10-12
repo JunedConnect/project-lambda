@@ -1,5 +1,5 @@
 module "api_gateway" {
-  source = "../../modules/api-gateway"
+  source = "./modules/api-gateway"
 
   name = var.name
   
@@ -8,20 +8,21 @@ module "api_gateway" {
 }
 
 module "cloudfront" {
-  source = "../../modules/cloudfront"
+  source = "./modules/cloudfront"
 
+  name                        = var.name
   s3_bucket_domain_name      = module.s3.s3_bucket_domain_name
-  s3_origin_id               = var.s3_origin_id
   domain_name                = var.domain_name
-  domain_aliases             = var.domain_aliases
   price_class                = var.price_class
-  geo_restriction_locations  = var.geo_restriction_locations
+  geo_whitelist  = var.geo_whitelist
   certificate_arn            = module.route53.certificate_arn
   certificate_validation_arn = module.route53.certificate_validation_arn
+  api_gateway_url            = module.api_gateway.api_gateway_url
+  api_gateway_stage_name     = module.api_gateway.api_gateway_stage_name
 }
 
 module "lambda" {
-  source = "../../modules/lambda"
+  source = "./modules/lambda"
 
   name = var.name
 
@@ -38,10 +39,9 @@ module "lambda" {
 }
 
 module "route53" {
-    source = "../../modules/route53"
+    source = "./modules/route53"
 
     domain_name          = var.domain_name
-    domain_aliases       = var.domain_aliases
     validation_method    = var.validation_method
     dns_ttl              = var.dns_ttl
 
@@ -51,9 +51,8 @@ module "route53" {
 }
 
 module "s3" {
-  source = "../../modules/s3"
+  source = "./modules/s3"
 
   name                        = var.name
-  s3_version_expiration_days  = var.s3_version_expiration_days
   cloudfront_distribution_arn = module.cloudfront.cloudfront_distribution_arn
 }

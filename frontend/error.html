@@ -3,49 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error - URL Shortener</title>
+    <title>URL Shortener</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+        :root { 
+            --green-primary: #0b7a3b; 
+            --green-dark: #085c2c; 
+            --green-light: #11a053; 
+            --green-text: #0b7a3b; 
+            --green-border: #11a053; 
         }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+            color: var(--green-text); 
+            background: #ffffff; 
         }
-        h1 {
-            color: #721c24;
+        body { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
         }
-        .error-icon {
-            font-size: 48px;
-            margin: 20px 0;
+        .container { 
+            width: 100%; 
+            max-width: 720px; 
+            padding: 24px; 
+        }
+        .card { 
+            background: #ffffff; 
+            border: 2px solid var(--green-border); 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(11,122,59,0.1); 
+            padding: 28px; 
+            text-align: center; 
+        }
+        h1 { 
+            margin: 0 0 8px 0; 
+            font-size: 28px; 
+            font-weight: 700; 
+            letter-spacing: 0.2px; 
+            color: var(--green-primary); 
+        }
+        .status { 
+            font-size: 18px; 
+            color: var(--green-light); 
+            font-weight: 600; 
+            margin: 20px 0; 
+        }
+        .timestamp { 
+            font-size: 14px; 
+            color: var(--green-dark); 
+            opacity: 0.8; 
+        }
+        .icon { 
+            font-size: 48px; 
+            margin-bottom: 16px; 
         }
         .back-link {
             margin-top: 20px;
         }
         .back-link a {
-            color: #007bff;
+            color: var(--green-primary);
             text-decoration: none;
+            font-weight: 600;
         }
         .back-link a:hover {
             text-decoration: underline;
         }
+        .error-icon {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+        .error-message {
+            color: #721c24;
+            margin: 20px 0;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(17,160,83,.3);
+            border-radius: 50%;
+            border-top-color: var(--green-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error {
+            color: #dc3545;
+            margin-top: 16px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="error-icon">⚠️</div>
-        <h1>Something went wrong</h1>
-        <p>The page you're looking for doesn't exist or there was an error.</p>
-        <div class="back-link">
-            <a href="index.html">← Back to URL Shortener</a>
+    <!-- Health Check Page (shown when URL is /health) -->
+    <div id="health-page" class="container" style="display: none;">
+        <div class="card">
+            <div class="icon">🔍</div>
+            <h1>Health Check</h1>
+            <div id="status" class="status">
+                <div class="loading"></div> Checking service...
+            </div>
+            <div id="timestamp" class="timestamp"></div>
+            <div id="health-error" class="error" style="display: none;"></div>
+            <div class="back-link">
+                <a href="/">← Back to URL Shortener</a>
+            </div>
         </div>
     </div>
+
+    <!-- Error Page (shown for all other URLs) -->
+    <div id="error-page" class="container">
+        <div class="card">
+            <div class="error-icon">⚠️</div>
+            <h1>Page Not Found</h1>
+            <p class="error-message">The page you're looking for doesn't exist.</p>
+            <div class="back-link">
+                <a href="/">← Back to URL Shortener</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '';
+        
+        // Check URL and show appropriate page
+        function checkURL() {
+            const path = window.location.pathname;
+            const healthPage = document.getElementById('health-page');
+            const errorPage = document.getElementById('error-page');
+            
+            if (path === '/health') {
+                healthPage.style.display = 'block';
+                errorPage.style.display = 'none';
+                checkHealth();
+            } else {
+                healthPage.style.display = 'none';
+                errorPage.style.display = 'block';
+            }
+        }
+        
+        // Health Check functionality
+        async function checkHealth() {
+            const statusDiv = document.getElementById('status');
+            const timestampDiv = document.getElementById('timestamp');
+            const errorDiv = document.getElementById('health-error');
+            
+            try {
+                console.log('Calling health endpoint:', `${API_BASE_URL}/healthz`);
+                
+                const response = await fetch(`${API_BASE_URL}/healthz`, {
+                    method: 'GET'
+                });
+                
+                console.log('Health response status:', response.status);
+                console.log('Health response headers:', response.headers);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Health response data:', data);
+                    
+                    statusDiv.className = 'status healthy';
+                    statusDiv.innerHTML = '✅ Service is healthy';
+                    timestampDiv.textContent = `Timestamp: ${data.ts}`;
+                    errorDiv.textContent = '';
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Health check error:', error);
+                statusDiv.className = 'status unhealthy';
+                statusDiv.innerHTML = '❌ Service is unhealthy';
+                errorDiv.textContent = `Error: ${error.message}`;
+                timestampDiv.textContent = '';
+            }
+        }
+        
+        // Check URL on page load
+        checkURL();
+        
+        // Auto-refresh health check every 30 seconds when on health page
+        setInterval(() => {
+            if (document.getElementById('health-page').style.display !== 'none') {
+                checkHealth();
+            }
+        }, 30000);
+    </script>
 </body>
 </html>

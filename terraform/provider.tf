@@ -14,7 +14,7 @@ terraform {
   }
   backend "s3" {
     bucket       = "tf-state-project-lambda"
-    key          = "prod/terraform.tfstate"
+    key          = "terraform.tfstate"
     region       = "eu-west-2"
     encrypt      = "true"
     use_lockfile = true
@@ -30,9 +30,3 @@ provider "aws" {
     tags = var.aws_tags
   }
 }
-
-# certificate provider
-# provider "aws" {
-#   region = "us-east-1"
-#   alias = "us_east_1" # this is required for CloudFront to work
-# }

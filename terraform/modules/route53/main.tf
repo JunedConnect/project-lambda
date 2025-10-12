@@ -11,7 +11,6 @@ resource "aws_route53_zone" "this" {
 resource "aws_acm_certificate" "this" {
   provider = aws.us_east_1
   domain_name       = var.domain_name
-  subject_alternative_names = [for alias in var.domain_aliases : "${alias}.${var.domain_name}"]
   validation_method = var.validation_method
 }
 
