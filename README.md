@@ -108,8 +108,8 @@ Access the application through your domain to use the web interface for URL shor
 |Here's what it will look like:|
 |-------|
 |Main Interface:|
-| ![Main App](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/Website.png) |
+| ![Main App](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/website.png) |
 |Health Check:|
 | ![Health Check](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/website-health.png) |
 |URL Redirection:|
-| ![URL Redirection](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/Website-Redirection.png) |
+| ![URL Redirection](https://raw.githubusercontent.com/JunedConnect/project-lambda/main/images/website-redirection.png) |
