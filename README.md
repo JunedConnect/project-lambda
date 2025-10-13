@@ -1,4 +1,4 @@
-# Project Lambda
+# Lambda Link
 
 The project builds a complete URL shortener service using **serverless AWS services** with **automated CI/CD pipelines** that deploy infrastructure and frontend code. The setup includes **CloudFront CDN** for global content delivery, **S3 static hosting** for the frontend, and **Lambda functions** for the backend API.
 
